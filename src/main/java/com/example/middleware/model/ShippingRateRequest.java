@@ -24,12 +24,12 @@ public record ShippingRateRequest(
         String destination_country,
         String destination_state,
         String destination_post_code,
-        String length,
-        String width,
-        String height,
+        Double length,
+        Double width,
+        Double height,
         String selected_type,
-        String parcel_weight,
-        String document_weight,
+        Double parcel_weight,
+        Double document_weight,
         @NotEmpty
         List<Provider> providers
 ) {

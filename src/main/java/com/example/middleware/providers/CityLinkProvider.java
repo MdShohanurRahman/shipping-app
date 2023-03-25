@@ -51,7 +51,7 @@ public class CityLinkProvider implements ShippingProvider {
         RestTemplate restTemplate = new RestTemplate();
 
         // prepare formData
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
         formData.add("origin_country", AppUtils.getCountryCodeByName(request.origin_country()));
         formData.add("origin_state", request.origin_state());
         formData.add("origin_postcode", request.origin_post_code());
@@ -62,15 +62,15 @@ public class CityLinkProvider implements ShippingProvider {
         formData.add("width", request.width());
         formData.add("height", request.height());
         formData.add("selected_type", Optional.ofNullable(request.selected_type()).orElse("1"));
-        formData.add("parcel_weight", Optional.ofNullable(request.parcel_weight()).orElse("1"));
-        formData.add("document_weight", Optional.ofNullable(request.document_weight()).orElse(""));
+        formData.add("parcel_weight", Optional.ofNullable(request.parcel_weight()).orElse(1D));
+        formData.add("document_weight", request.document_weight());
 
         // Set headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        log.info("Request data: " + formData);
-        log.info("Request headers: " + headers);
+        log.info("{} Request data: {}", Provider.CITY_LINK, formData);
+        log.info("{} Request headers: {}", Provider.CITY_LINK, headers);
         var requestEntity = new HttpEntity<>(formData, headers);
         var response = restTemplate.exchange(
                 "https://www.citylinkexpress.com/wp-json/wp/v2/getShippingRate",
@@ -78,7 +78,7 @@ public class CityLinkProvider implements ShippingProvider {
                 requestEntity,
                 Map.class
         );
-        log.info("Response data: " + response);
+        log.info("{} Response data:: {}", Provider.CITY_LINK, response);
 
         return response;
     }

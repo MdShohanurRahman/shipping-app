@@ -7,20 +7,20 @@ package com.example.middleware.utils;
 
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class AppUtils {
 
-    static Map<String, String> countryCodes = new HashMap<>();
+    static Map<String, String> countryCodes = new ConcurrentHashMap<>();
 
     /*
     * @param countryName ex: "Malaysia", "Bangladesh"
     * */
     public static String getCountryCodeByName(String countryName) {
-        // if already have value then return from map
+        // if exists then return from countryCodes map
         if (countryCodes.containsKey(countryName)) {
             return countryCodes.get(countryName);
         }
@@ -29,9 +29,8 @@ public class AppUtils {
             Locale obj = new Locale("", countryCode);
             if (obj.getDisplayCountry().equals(countryName)) {
                 countryCodes.put(countryName, obj.getCountry());
-                return obj.getCountry();
             }
         }
-        return "";
+        return countryCodes.getOrDefault(countryName, "");
     }
 }
