@@ -6,8 +6,6 @@
 package com.example.middleware.model;
 
 import com.example.middleware.enums.Provider;
-import com.example.middleware.exception.ApiException;
-import com.example.middleware.utils.AppUtils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -32,14 +30,4 @@ public record ShippingRateRequest(
         Double document_weight,
         @NotEmpty
         List<Provider> providers
-) {
-    public void primaryValidation() {
-        if (AppUtils.getCountryCodeByName(origin_country()).isBlank()) {
-            throw new ApiException("invalid origin_country");
-        }
-        if (AppUtils.getCountryCodeByName(destination_country()).isBlank()) {
-            throw new ApiException("invalid destination_country");
-        }
-        // add other validation rules as needed
-    }
-}
+) { }

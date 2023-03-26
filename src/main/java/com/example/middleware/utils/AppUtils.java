@@ -5,32 +5,27 @@
 
 package com.example.middleware.utils;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class AppUtils {
 
-    static Map<String, String> countryCodes = new ConcurrentHashMap<>();
-
     /*
-    * @param countryName ex: "Malaysia", "Bangladesh"
-    * */
-    public static String getCountryCodeByName(String countryName) {
-        // if exists then return from countryCodes map
-        if (countryCodes.containsKey(countryName)) {
-            return countryCodes.get(countryName);
-        }
+     * @param countryName ex: "Malaysia", "Bangladesh"
+     * return ML, BD
+     * */
+    @Cacheable("countryCodes")
+    public String getCountryCodeByName(String countryName) {
         String[] isoCountries = Locale.getISOCountries();
         for (String countryCode : isoCountries) {
             Locale obj = new Locale("", countryCode);
             if (obj.getDisplayCountry().equals(countryName)) {
-                countryCodes.put(countryName, obj.getCountry());
+                return obj.getCountry();
             }
         }
-        return countryCodes.getOrDefault(countryName, "");
+        return "";
     }
 }
