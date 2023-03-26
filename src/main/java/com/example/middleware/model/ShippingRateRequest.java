@@ -9,7 +9,7 @@ import com.example.middleware.enums.Provider;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
-import java.util.List;
+import java.util.Set;
 
 public record ShippingRateRequest(
         @NotBlank
@@ -29,5 +29,5 @@ public record ShippingRateRequest(
         Double parcel_weight,
         Double document_weight,
         @NotEmpty
-        List<Provider> providers
+        Set<Provider> providers
 ) { }

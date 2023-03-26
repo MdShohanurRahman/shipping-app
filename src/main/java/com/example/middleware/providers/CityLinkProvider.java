@@ -49,6 +49,7 @@ public class CityLinkProvider implements ShippingProvider {
         }
         catch (Exception exception) {
             exception.printStackTrace();
+            log.error("can't get data from CITY_LINK");
             return new ShippingRateData(
                     Provider.CITY_LINK, "0", exception.getMessage()
             );

@@ -34,13 +34,13 @@ public class ShippingRateServiceImpl implements ShippingRateService {
         primaryValidation(request);
         return request.providers().stream()
                 .map(provider -> CompletableFuture.supplyAsync(() -> {
-                    log.info("{} thread started", provider);
+                    log.info("{} executing started", provider);
                     ShippingProvider shippingProvider = shippingProviderFactory.getShippingProvider(provider);
                     return shippingProvider.getShippingRateData(request);
                 }))
                 .map(future -> future.thenApply(result -> {
                     // Log information for each thread and when a thread finishes executing
-                    log.info("{} thread finished", result.provider());
+                    log.info("{} executing finished", result.provider());
                     return result;
                 }))
                 .map(CompletableFuture::join)
