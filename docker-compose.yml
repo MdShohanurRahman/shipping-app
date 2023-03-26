@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    container_name: mysqldb
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: middleware-db
+    ports:
+        - "3309:3306"
+    networks:
+      middleware-app-net:
+
+  middleware-app:
+    container_name: middleware-app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+    networks:
+      middleware-app-net:
+    restart: always
+
+networks:
+  middleware-app-net:
