@@ -59,8 +59,6 @@ public class JTExpressProvider implements ShippingProvider {
                 return rateData;
             }
 
-            boolean isDomesticShipping = request.destination_country().equals("MY");
-
             // Configure the webdriver binary
             WebDriverManager.chromedriver().setup();
 
@@ -74,33 +72,52 @@ public class JTExpressProvider implements ShippingProvider {
 
             // Find the form fields and fill them up
             JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript(
-                    "$('input#international').prop('checked', true);" +
-                            "$('#destination-country-div').css('display', 'flex');" +
-                            "$('#receiver_postcode_div').css('display', 'none');" +
-                            "$('#shipping-type').html('<option value=\"EZ\">Regular</option>');" +
-                            "$('#receiver_postcode').val('12345');" +
-                            "$('#div-insurance').css('display', 'block');"
-            );
+            if (request.internationalShipping()) {
+                js.executeScript(
+                        "$('input#international').prop('checked', true);" +
+                                "$('#destination-country-div').css('display', 'flex');" +
+                                "$('#receiver_postcode_div').css('display', 'none');" +
+                                "$('#shipping-type').html('<option value=\"EZ\">Regular</option>');" +
+                                "$('#receiver_postcode').val('12345');" +
+                                "$('#div-insurance').css('display', 'block');"
+                );
+                WebElement destination_country = driver.findElement(By.name("destination_country"));
+                Select dropdown = new Select(destination_country);
+                dropdown.selectByValue(destinationCountryMap.get(request.destination_country()));
+            }
+            else {
+                WebElement receiver_postcode = driver.findElement(By.name("receiver_postcode"));
+                receiver_postcode.sendKeys(request.destination_postCode());
+
+                WebElement shipping_type = driver.findElement(By.name("shipping_type"));
+                Select dropdown = new Select(shipping_type);
+                dropdown.selectByValue(request.expressDelivery() ? "EX" : "EZ");
+            }
 
             WebElement sender_postcode = driver.findElement(By.name("sender_postcode"));
             sender_postcode.sendKeys(request.origin_post_code());
 
-            WebElement destination_country = driver.findElement(By.name("destination_country"));
-            Select dropdown = new Select(destination_country);
-            dropdown.selectByValue(destinationCountryMap.get(request.destination_country()));
-
-            WebElement weight = driver.findElement(By.name("weight"));
-            weight.sendKeys(request.weight().toString());
-
-            WebElement length = driver.findElement(By.name("length"));
-            length.sendKeys(request.length().toString());
-
-            WebElement width = driver.findElement(By.name("width"));
-            width.sendKeys(request.width().toString());
-
-            WebElement height = driver.findElement(By.name("height"));
-            height.sendKeys(request.height().toString());
+            if (request.weight() != null) {
+                WebElement weight = driver.findElement(By.name("weight"));
+                weight.sendKeys(request.weight().toString());
+            }
+            if (request.length() != null) {
+                WebElement length = driver.findElement(By.name("length"));
+                length.sendKeys(request.length().toString());
+            }
+            if (request.width() != null) {
+                WebElement width = driver.findElement(By.name("width"));
+                width.sendKeys(request.width().toString());
+            }
+            if (request.height() != null) {
+                WebElement height = driver.findElement(By.name("height"));
+                height.sendKeys(request.height().toString());
+            }
+            if (request.insurance_item_value() != null) {
+                driver.findElement(By.id("insurance")).click();
+                WebElement item_value = driver.findElement(By.name("item_value"));
+                item_value.sendKeys(request.insurance_item_value());
+            }
 
             // Click the submit button
             WebElement submitButton = driver.findElement(By.id("form-rates"));
@@ -163,8 +180,14 @@ public class JTExpressProvider implements ShippingProvider {
         if (!destinationCountryMap.containsKey(request.destination_country())) {
             errors.add(request.destination_country() + " is not supported destination_country for this provider");
         }
-        if (request.length() > 80 || request.width() > 80 || request.height() > 80) {
-            errors.add("length, width, height can not be greater than 80");
+        if (request.length() != null && request.length() > 80) {
+            errors.add("length can not be greater than 80");
+        }
+        if (request.width() != null && request.width() > 80) {
+            errors.add("width can not be greater than 80");
+        }
+        if (request.height() != null && request.height() > 80) {
+            errors.add("height can not be greater than 80");
         }
         return errors;
     }

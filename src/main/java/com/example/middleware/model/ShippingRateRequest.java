@@ -54,6 +54,12 @@ public record ShippingRateRequest(
                 defaultValue = "false",
                 allowableValues = {"true", "false"}
         )
+        boolean internationalShipping,
+
+        @Schema(
+                defaultValue = "false",
+                allowableValues = {"true", "false"}
+        )
         boolean expressDelivery,
 
         @DecimalMin("0.0")
@@ -80,6 +86,8 @@ public record ShippingRateRequest(
                 defaultValue = "1"
         )
         Double weight,
+
+        String insurance_item_value,
 
         @NotEmpty.List({
                 @NotEmpty(message = "providers is required")
