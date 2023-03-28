@@ -17,17 +17,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class CityLinkProvider implements ShippingProvider {
 
-    private final List<String> cityLinkOriginStateList = List.of(
+    private static final List<String> originStateList = List.of(
             "Johor", "Kedah", "Kelantan", "Kuala Lumpur",
             "Melaka", "Negeri Sembilan", "Pahang", "Perak",
             "Perlis", "Pulau Pinang", "Sabah", "Sarawak",
@@ -36,8 +33,9 @@ public class CityLinkProvider implements ShippingProvider {
 
     @Override
     public ShippingRateData getShippingRateData(ShippingRateRequest request) {
-        ShippingRateData rateData = new ShippingRateData(Provider.CITY_LINK);
+        ShippingRateData rateData = new ShippingRateData(Provider.CITY_LINK_EXPRESS);
         try {
+            // sanitize data
             List<String> errors = checkErrors(request);
 
             if (errors.size() > 0) {
@@ -60,11 +58,10 @@ public class CityLinkProvider implements ShippingProvider {
             }
 
             return rateData;
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            log.error("can't get data from CITY_LINK");
-            rateData.setRate("0");
-            rateData.setMessages(List.of(exception.getMessage()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.error("can't get data from {}", Provider.CITY_LINK_EXPRESS);
+            rateData.setMessages(List.of(ex.getMessage()));
             return rateData;
         }
     }
@@ -78,21 +75,23 @@ public class CityLinkProvider implements ShippingProvider {
         formData.add("origin_state", request.origin_state());
         formData.add("origin_postcode", request.origin_post_code());
         formData.add("destination_country", request.destination_country());
-        formData.add("destination_state", request.destination_country());
-        formData.add("destination_postcode", "50000");
+        formData.add("destination_state", Optional.ofNullable(request.destination_state()).orElse(request.destination_country()));
+        formData.add("destination_postcode", Optional.ofNullable(request.destination_postCode()).orElse("50000"));
         formData.add("length", request.length());
         formData.add("width", request.width());
         formData.add("height", request.height());
         formData.add("selected_type", GoodsType.valueOf(request.goods_type()).value());
-        formData.add("parcel_weight", request.parcel_weight());
-        formData.add("document_weight", request.document_weight());
-
+        if (Objects.equals(request.goods_type(), GoodsType.PARCEL.name())) {
+            formData.add("parcel_weight", request.weight());
+        } else {
+            formData.add("document_weight", request.weight());
+        }
         // Set headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        log.info("{} Request data:: {}", Provider.CITY_LINK, formData);
-        log.info("{} Request headers:: {}", Provider.CITY_LINK, headers);
+        log.info("{} Request data:: {}", Provider.CITY_LINK_EXPRESS, formData);
+        log.info("{} Request headers:: {}", Provider.CITY_LINK_EXPRESS, headers);
         var requestEntity = new HttpEntity<>(formData, headers);
         var response = restTemplate.exchange(
                 "https://www.citylinkexpress.com/wp-json/wp/v2/getShippingRate",
@@ -100,36 +99,27 @@ public class CityLinkProvider implements ShippingProvider {
                 requestEntity,
                 Map.class
         );
-        log.info("{} Response data:: {}", Provider.CITY_LINK, response);
+        log.info("{} Response data:: {}", Provider.CITY_LINK_EXPRESS, response);
 
         return response;
     }
 
     private List<String> checkErrors(ShippingRateRequest request) {
         List<String> errors = new ArrayList<>();
-        if (!cityLinkOriginStateList.contains(request.origin_state())) {
+        if (!originStateList.contains(request.origin_state())) {
             errors.add(request.origin_state() + " is not valid origin_state");
         }
 
         if (Objects.equals(request.goods_type(), GoodsType.PARCEL.name())) {
-            // if parcel then length, width, height, parcel_width is required
-            if (request.length() == null) {
-                errors.add("length is required");
+            // if parcel then length, width, height is required
+            if (request.length() == null || request.length() <= 0) {
+                errors.add("length can not be 0");
             }
-            if (request.width() == null) {
-                errors.add("width is required");
+            if (request.width() == null || request.width() <= 0) {
+                errors.add("width can not be 0");
             }
-            if (request.height() == null) {
-                errors.add("height is required");
-            }
-            if (request.parcel_weight() == null) {
-                errors.add("parcel_weight is required");
-            }
-        }
-
-        if (request.goods_type().equals(GoodsType.DOCUMENT.name())) {
-            if (request.document_weight() == null) {
-                errors.add("parcel_weight is required");
+            if (request.height() == null || request.height() <=0) {
+                errors.add("height can not be 0");
             }
         }
 

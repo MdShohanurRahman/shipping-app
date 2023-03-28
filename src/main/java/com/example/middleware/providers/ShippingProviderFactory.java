@@ -6,7 +6,6 @@
 package com.example.middleware.providers;
 
 import com.example.middleware.enums.Provider;
-import com.example.middleware.utils.AppUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +13,7 @@ public record ShippingProviderFactory() {
 
     public ShippingProvider getShippingProvider(Provider provider) {
         return switch (provider) {
-            case CITY_LINK -> new CityLinkProvider();
+            case CITY_LINK_EXPRESS -> new CityLinkProvider();
             case JT_EXPRESS -> new JTExpressProvider();
         };
     }
