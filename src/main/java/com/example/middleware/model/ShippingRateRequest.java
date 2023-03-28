@@ -98,7 +98,7 @@ public record ShippingRateRequest(
             }
         });
         if (!Objects.equals(origin_country(), "MY")) {
-            throw new ApiException("origin country should be Malaysia");
+            throw new ApiException("origin country should be MY (Malaysia)");
         }
         if (CountryCode.getByCode(destination_country()) == null) {
             throw new ApiException("invalid destination_country");
