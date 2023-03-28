@@ -5,27 +5,35 @@
 
 package com.example.middleware.utils;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class AppUtils {
 
+    private static final Map<String, String> countryCodes = new ConcurrentHashMap<>();
+
+    List<String> jitExpressDestinationCountryList = List.of(
+            "BWN", "HKG", "SIN", "VNM", "CHN", "THA", "IDN", "OHL"
+    );
+
     /*
-     * @param countryName ex: "Malaysia", "Bangladesh"
-     * return ML, BD
+     * @param countryName ex: ML, BD
+     * return  Malaysia, Bangladesh
      * */
-    @Cacheable("countryCodes")
-    public String getCountryCodeByName(String countryName) {
+    public static String getCountryCode(String countryName) {
+        if (countryCodes.containsKey(countryName)) {
+            return countryCodes.get(countryName);
+        }
         String[] isoCountries = Locale.getISOCountries();
         for (String countryCode : isoCountries) {
             Locale obj = new Locale("", countryCode);
-            if (obj.getDisplayCountry().equals(countryName)) {
-                return obj.getCountry();
-            }
+            countryCodes.put(obj.getCountry(), obj.getDisplayCountry());
         }
-        return "";
+        return countryCodes.get(countryName);
     }
 }

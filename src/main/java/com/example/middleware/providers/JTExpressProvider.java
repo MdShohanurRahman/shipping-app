@@ -18,14 +18,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JTExpressProvider implements ShippingProvider {
 
-    private final AppUtils appUtils;
-
     @Override
     public ShippingRateData getShippingRateData(ShippingRateRequest request) {
-        return new ShippingRateData(
-                Provider.JT_EXPRESS,
-                "0",
-                "this provider has no public api"
-        );
+        return new ShippingRateData(Provider.JT_EXPRESS);
     }
 }

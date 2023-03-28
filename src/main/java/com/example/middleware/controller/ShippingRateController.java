@@ -11,11 +11,9 @@ import com.example.middleware.model.ShippingRateResponse;
 import com.example.middleware.service.ShippingRateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,4 +29,8 @@ public class ShippingRateController {
         List<ShippingRateData> shippingRates = shippingRateService.getShippingRateData(request);
         return ResponseEntity.ok(new ShippingRateResponse(shippingRates));
     }
+
+    @GetMapping("/clear-cache")
+    @CacheEvict(value = "shippingRates", allEntries = true)
+    public void clearCache() {}
 }

@@ -10,12 +10,12 @@ import com.example.middleware.utils.AppUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public record ShippingProviderFactory(AppUtils appUtils) {
+public record ShippingProviderFactory() {
 
     public ShippingProvider getShippingProvider(Provider provider) {
         return switch (provider) {
-            case CITY_LINK -> new CityLinkProvider(appUtils);
-            case JT_EXPRESS -> new JTExpressProvider(appUtils);
+            case CITY_LINK -> new CityLinkProvider();
+            case JT_EXPRESS -> new JTExpressProvider();
         };
     }
 }
