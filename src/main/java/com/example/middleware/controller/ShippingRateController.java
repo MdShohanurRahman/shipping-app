@@ -21,12 +21,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/shipping-rates")
 public class ShippingRateController {
 
     private final ShippingRateService shippingRateService;
 
-    @PostMapping("/shipping-rates")
+    @PostMapping()
     public ResponseEntity<ShippingRateResponse> shippingRates(@Valid @RequestBody ShippingRateRequest request) {
         List<ShippingRateData> shippingRates = shippingRateService.getShippingRateData(request);
         return ResponseEntity.ok(new ShippingRateResponse(shippingRates));

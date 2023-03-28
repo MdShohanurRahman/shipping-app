@@ -8,7 +8,11 @@ package com.example.middleware.service;
 import com.example.middleware.model.UserRequest;
 import com.example.middleware.model.UserResponse;
 
+import java.util.List;
+
 public interface UserService {
+
+    List<UserResponse> getUsers();
 
     UserResponse getUserByUUID(String uuid);
 

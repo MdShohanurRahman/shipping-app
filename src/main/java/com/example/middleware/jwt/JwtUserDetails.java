@@ -29,7 +29,7 @@ public class JwtUserDetails implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        if ("admin".equals(email) && "dev".equals(appMode)) {
+        if ("admin@gmail.com".equals(email) && "dev".equals(appMode)) {
             return User.withUsername("admin")
                     .password(passwordEncoder.encode("admin"))
                     .roles("ADMIN")

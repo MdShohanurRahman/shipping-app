@@ -47,7 +47,7 @@ public class JwtOncePerRequestFilter extends OncePerRequestFilter {
         String userName = null;
 
         try {
-            userName = jwtUtils.getUserNameFromToken(token);
+            userName = jwtUtils.extractUsername(token);
         } catch (MalformedJwtException | UnsupportedJwtException | IllegalArgumentException | SignatureException e) {
             request.setAttribute("exp", "Invalid token");
         } catch (ExpiredJwtException e) {
