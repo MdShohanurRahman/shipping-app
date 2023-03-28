@@ -54,12 +54,6 @@ public record ShippingRateRequest(
                 defaultValue = "false",
                 allowableValues = {"true", "false"}
         )
-        boolean internationalShipping,
-
-        @Schema(
-                defaultValue = "false",
-                allowableValues = {"true", "false"}
-        )
         boolean expressDelivery,
 
         @DecimalMin("0.0")

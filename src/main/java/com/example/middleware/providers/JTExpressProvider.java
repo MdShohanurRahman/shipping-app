@@ -24,10 +24,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -59,6 +56,8 @@ public class JTExpressProvider implements ShippingProvider {
                 return rateData;
             }
 
+            boolean internationShipping = !Objects.equals(request.destination_country(), "MY");
+
             // Configure the webdriver binary
             WebDriverManager.chromedriver().setup();
 
@@ -72,7 +71,7 @@ public class JTExpressProvider implements ShippingProvider {
 
             // Find the form fields and fill them up
             JavascriptExecutor js = (JavascriptExecutor) driver;
-            if (request.internationalShipping()) {
+            if (internationShipping) {
                 js.executeScript(
                         "$('input#international').prop('checked', true);" +
                                 "$('#destination-country-div').css('display', 'flex');" +
