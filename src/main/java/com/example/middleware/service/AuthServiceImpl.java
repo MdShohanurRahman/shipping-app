@@ -49,8 +49,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setRoles(Role.ROLE_VIEWER);
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     @Override

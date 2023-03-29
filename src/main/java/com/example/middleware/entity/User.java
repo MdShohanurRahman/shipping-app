@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
