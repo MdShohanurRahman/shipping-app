@@ -54,11 +54,85 @@ Users can see the rate and other details for each provider in the response paylo
 
 **Installation**
 
-To run this project, you will need to have Docker installed on your machine. Clone the repository and run the following command in the project directory:
+**Running Locally (Docker Users)**
+
+If you have docker installed in your machine then follow these steps
+
+Clone the repository to your local machine using Git
+
+```bash
+git clone https://gitlab.com/shohan.drmc/middleware-app.git
+```
+
+Navigate to the project directory
+
+```bash
+cd middleware-app
+```
+
+Uncomment `spring.profiles.active=docker` this line in your `src/main/resources/application.properties`  
+before build your project
+
+build the project and generate the jar file running the following command
+
+```bash
+mvn clean install
+```
+
+Run the following command to start up your application:
 
 ```bash
 docker-compose up
 ```
+
+Once the containers are up and running, you should be able to access your application by visiting [**http://localhost:8080**](http://localhost:8080) in your web browser.
+
+If you want to stop the application, simply run the following command:
+
+```bash
+docker-compose down
+```
+
+Note that if you make any changes to your code, you may need to rebuild your Docker images using the `docker-compose build` command before running `docker-compose up` again.
+
+###   
+**Running Locally**
+
+Clone the repository to your local machine using Git
+
+```bash
+git clone https://gitlab.com/shohan.drmc/middleware-app.git
+```
+
+Navigate to the project directory
+
+```bash
+cd middleware-app
+```
+
+Make sure you have Java 17 installed on your machine. You can verify the version by running the following command:
+
+```bash
+java -version
+```
+
+Create a new database named `middleware-db` in your MySQL database.
+
+Configure the database connection in `src/main/resources/application.properties`
+
+```bash
+spring.datasource.url=jdbc:mysql://localhost:3306/middleware-db
+spring.datasource.username=<your-db-username> 
+spring.datasource.password=<your-db-password> 
+```
+
+Run the project using the following command
+
+```bash
+mvn spring-boot:run
+```
+
+The project should now be running on [`http://localhost:8080`](http://localhost:8080).
 
 
 **Usage**

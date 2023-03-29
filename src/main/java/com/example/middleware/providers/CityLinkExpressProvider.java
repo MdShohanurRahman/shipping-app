@@ -22,7 +22,7 @@ import java.util.*;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class CityLinkProvider implements ShippingProvider {
+public class CityLinkExpressProvider implements ShippingProvider {
 
     private static final List<String> originStateList = List.of(
             "Johor", "Kedah", "Kelantan", "Kuala Lumpur",

@@ -13,7 +13,7 @@ public record ShippingProviderFactory() {
 
     public ShippingProvider getShippingProvider(Provider provider) {
         return switch (provider) {
-            case CITY_LINK_EXPRESS -> new CityLinkProvider();
+            case CITY_LINK_EXPRESS -> new CityLinkExpressProvider();
             case JT_EXPRESS -> new JTExpressProvider();
         };
     }

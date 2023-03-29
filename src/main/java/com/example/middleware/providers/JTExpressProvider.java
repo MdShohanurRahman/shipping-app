@@ -59,6 +59,7 @@ public class JTExpressProvider implements ShippingProvider {
             boolean internationShipping = !Objects.equals(request.destination_country(), "MY");
 
             // Configure the webdriver binary
+            log.info("{} setup chrome driver", Provider.JT_EXPRESS);
             WebDriverManager.chromedriver().setup();
 
             // Launch the browser
@@ -68,8 +69,10 @@ public class JTExpressProvider implements ShippingProvider {
 
             // Navigate to the website
             driver.get("https://www.jtexpress.my/shipping-rates");
+            log.info("{} navigate to the website and get content", Provider.JT_EXPRESS);
 
             // Find the form fields and fill them up
+            log.info("{} started to fill up the form", Provider.JT_EXPRESS);
             JavascriptExecutor js = (JavascriptExecutor) driver;
             if (internationShipping) {
                 js.executeScript(
@@ -121,6 +124,7 @@ public class JTExpressProvider implements ShippingProvider {
             // Click the submit button
             WebElement submitButton = driver.findElement(By.id("form-rates"));
             submitButton.submit();
+            log.info("{} submitted the form", Provider.JT_EXPRESS);
 
             // Wait for the response to come back and find the table element
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(1000));
@@ -145,6 +149,7 @@ public class JTExpressProvider implements ShippingProvider {
 
             // Get the tables and loop through them
             List<WebElement> tables = driver.findElements(By.cssSelector("#content table"));
+            log.info("{}, get table size {}", Provider.JT_EXPRESS, tables.size());
             for (int tableIndex = 0; tableIndex < tables.size(); tableIndex++) {
                 WebElement table = tables.get(tableIndex);
                 // skip header row
@@ -154,6 +159,7 @@ public class JTExpressProvider implements ShippingProvider {
             }
 
             if (tableData.size() > 1) {
+                log.info("{} preparing shippingRateData", Provider.JT_EXPRESS);
                 var parcelData = tableData.get(0);
                 var documentData = tableData.get(1);
                 if (request.goods_type().equals(GoodsType.PARCEL.name())) {
@@ -178,6 +184,9 @@ public class JTExpressProvider implements ShippingProvider {
         List<String> errors = new ArrayList<>();
         if (!destinationCountryMap.containsKey(request.destination_country())) {
             errors.add(request.destination_country() + " is not supported destination_country for this provider");
+        }
+        if (request.destination_country().equals("MY") && request.destination_postCode() == null) {
+            errors.add("destination_postCode is required");
         }
         if (request.length() != null && request.length() > 80) {
             errors.add("length can not be greater than 80");
