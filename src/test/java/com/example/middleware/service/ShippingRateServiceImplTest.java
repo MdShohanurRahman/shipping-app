@@ -18,25 +18,43 @@ import java.util.stream.Collectors;
 class ShippingRateServiceImplTest {
 
     private ShippingRateRequest request;
+    private final ShippingRateRequest request1 = new ShippingRateRequest(
+            "MY",
+            "Johor",
+            "80100",
+            "MY",
+            "Johor",
+            "80200",
+            "PARCEL",
+            false,
+            1D,
+            1D,
+            1D,
+            1D,
+            0D,
+            Set.of("CITY_LINK_EXPRESS", "JT_EXPRESS"));
+
+    private final ShippingRateRequest request2 = new ShippingRateRequest(
+            "MY",
+            "Johor",
+            "80100",
+            "IDN",
+            "Johor",
+            "80200",
+            "PARCEL",
+            false,
+            1D,
+            1D,
+            1D,
+            1D,
+            0D,
+            Set.of("CITY_LINK_EXPRESS", "JT_EXPRESS"));
+
+
 
     @BeforeEach
     void setUp() {
-       request = new ShippingRateRequest(
-                "MY",
-                "Johor",
-                "80100",
-                "MY",
-                "Johor",
-                "80200",
-                "PARCEL",
-                false,
-                1D,
-                1D,
-                1D,
-                1D,
-                0D,
-                Set.of("CITY_LINK_EXPRESS", "JT_EXPRESS"));
-
+       request = this.request2;
     }
 
     @AfterEach
@@ -46,7 +64,6 @@ class ShippingRateServiceImplTest {
     @Test
     void testGetShippingRateData() {
         // given
-        ShippingRateRequest request = this.request;
         List<ShippingRateData> shippingRateDataList;
         ShippingProviderFactory providerFactory = new ShippingProviderFactory();
 
