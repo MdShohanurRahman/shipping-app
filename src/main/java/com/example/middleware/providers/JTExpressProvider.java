@@ -5,6 +5,7 @@
 
 package com.example.middleware.providers;
 
+import com.example.middleware.enums.CountryCode;
 import com.example.middleware.enums.GoodsType;
 import com.example.middleware.enums.Provider;
 import com.example.middleware.model.ShippingRateData;
@@ -56,7 +57,10 @@ public class JTExpressProvider implements ShippingProvider {
                 return rateData;
             }
 
-            boolean internationShipping = !Objects.equals(request.destination_country(), "MY");
+            boolean internationShipping = !Objects.equals(
+                    CountryCode.getByCode(request.destination_country()).getAlpha2(),
+                    "MY"
+            );
 
             // Configure the webdriver binary
             log.info("{} setup chrome driver", Provider.JT_EXPRESS);
@@ -85,7 +89,8 @@ public class JTExpressProvider implements ShippingProvider {
                 );
                 WebElement destination_country = driver.findElement(By.name("destination_country"));
                 Select dropdown = new Select(destination_country);
-                dropdown.selectByValue(destinationCountryMap.get(request.destination_country()));
+                String value = CountryCode.getByCode(request.destination_country()).getAlpha3();
+                dropdown.selectByValue(value);
             }
             else {
                 WebElement receiver_postcode = driver.findElement(By.name("receiver_postcode"));
@@ -115,10 +120,10 @@ public class JTExpressProvider implements ShippingProvider {
                 WebElement height = driver.findElement(By.name("height"));
                 height.sendKeys(request.height().toString());
             }
-            if (request.insurance_item_value() != null) {
+            if (request.insurance_item_value() != null && request.insurance_item_value() > 0) {
                 driver.findElement(By.id("insurance")).click();
                 WebElement item_value = driver.findElement(By.name("item_value"));
-                item_value.sendKeys(request.insurance_item_value());
+                item_value.sendKeys(request.insurance_item_value().toString());
             }
 
             // Click the submit button
@@ -182,10 +187,15 @@ public class JTExpressProvider implements ShippingProvider {
 
     private List<String> checkErrors(ShippingRateRequest request) {
         List<String> errors = new ArrayList<>();
-        if (!destinationCountryMap.containsKey(request.destination_country())) {
-            errors.add(request.destination_country() + " is not supported destination_country for this provider");
+        String originCountryAlfa2Code = CountryCode.getByCode(request.origin_country()).getAlpha2();
+        String destinationCountryAlfa2Code = CountryCode.getByCode(request.destination_country()).getAlpha2();
+        boolean domesticShipping = originCountryAlfa2Code.equals(destinationCountryAlfa2Code);
+        if (!domesticShipping) {
+            if (!destinationCountryMap.containsKey(destinationCountryAlfa2Code)) {
+                errors.add(request.destination_country() + " is not supported destination_country for this provider");
+            }
         }
-        if (request.destination_country().equals("MY") && request.destination_postCode() == null) {
+        if (domesticShipping && request.destination_postCode() == null) {
             errors.add("destination_postCode is required");
         }
         if (request.length() != null && request.length() > 80) {

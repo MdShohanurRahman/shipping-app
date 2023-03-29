@@ -37,7 +37,6 @@ public class ShippingRateServiceImpl implements ShippingRateService {
                     return shippingProvider.getShippingRateData(request);
                 }))
                 .map(future -> future.thenApply(result -> {
-                    // Log information for each thread and when a thread finishes executing
                     log.info("{} executing finished", result.getProvider());
                     return result;
                 }))

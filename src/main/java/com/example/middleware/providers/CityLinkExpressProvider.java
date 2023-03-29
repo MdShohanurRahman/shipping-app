@@ -5,6 +5,7 @@
 
 package com.example.middleware.providers;
 
+import com.example.middleware.enums.CountryCode;
 import com.example.middleware.enums.GoodsType;
 import com.example.middleware.enums.Provider;
 import com.example.middleware.model.ShippingRateData;
@@ -69,13 +70,14 @@ public class CityLinkExpressProvider implements ShippingProvider {
     private ResponseEntity<Map> getApiResponse(ShippingRateRequest request) {
         RestTemplate restTemplate = new RestTemplate();
 
+        String destinationCountry = CountryCode.getByCode(request.destination_country()).getAlpha2();
         // prepare formData
         MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
         formData.add("origin_country", "MY");
         formData.add("origin_state", request.origin_state());
         formData.add("origin_postcode", request.origin_post_code());
-        formData.add("destination_country", request.destination_country());
-        formData.add("destination_state", Optional.ofNullable(request.destination_state()).orElse(request.destination_country()));
+        formData.add("destination_country", destinationCountry);
+        formData.add("destination_state", Optional.ofNullable(request.destination_state()).orElse(destinationCountry));
         formData.add("destination_postcode", Optional.ofNullable(request.destination_postCode()).orElse("50000"));
         formData.add("length", request.length());
         formData.add("width", request.width());

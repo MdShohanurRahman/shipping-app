@@ -37,11 +37,19 @@ public record ShippingRateRequest(
 
         @NotBlank
         @Schema(
-                example = "ID",
-                description = "accept alfa-2 code"
+                example = "MY",
+                description = "accept country code"
         )
         String destination_country,
+
+        @Schema(
+                example = "Johor"
+        )
         String destination_state,
+
+        @Schema(
+                example = "80200"
+        )
         String destination_postCode,
 
         @Schema(
@@ -81,7 +89,7 @@ public record ShippingRateRequest(
         )
         Double weight,
 
-        String insurance_item_value,
+        Double insurance_item_value,
 
         @NotEmpty.List({
                 @NotEmpty(message = "providers is required")
@@ -97,7 +105,7 @@ public record ShippingRateRequest(
                 throw new ApiException("invalid provider " + provider);
             }
         });
-        if (!Objects.equals(origin_country(), "MY")) {
+        if (!Objects.equals(CountryCode.getByCode(origin_country()).getAlpha2(), "MY")) {
             throw new ApiException("origin country should be MY (Malaysia)");
         }
         if (CountryCode.getByCode(destination_country()) == null) {
