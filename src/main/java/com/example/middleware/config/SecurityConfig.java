@@ -47,7 +47,7 @@ public class SecurityConfig {
          * Set permissions on endpoints
          * Add JWT filter
          * */
-        httpSecurity
+        return httpSecurity
                 .cors()
                 .and()
                 .csrf()
@@ -60,10 +60,9 @@ public class SecurityConfig {
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        httpSecurity.addFilterBefore(jwtOncePerRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return httpSecurity.build();
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtOncePerRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 }

@@ -133,8 +133,7 @@ public class JTExpressProvider implements ShippingProvider {
 
             // Wait for the response to come back and find the table element
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(1000));
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.id("content")));
-            Thread.sleep(1000);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#content table")));
 
             // collect form errors
             List<WebElement> errorElements = driver.findElements(By.cssSelector("p.err-text"));
