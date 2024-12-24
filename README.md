@@ -1,4 +1,4 @@
-# **Shipping Provider Middleware**
+# **Shipping App**
 
 This project is a middleware that provides shipping rate comparison between two shipping providers: City Link Express and JT Express. Users can submit a request with specific details of their shipment, and the middleware will return rates for both providers.
 
@@ -61,13 +61,13 @@ If you have docker installed in your machine then follow these steps
 Clone the repository to your local machine using Git
 
 ```bash
-git clone https://gitlab.com/shohan.drmc/middleware-app.git
+git clone https://gitlab.com/shohan.drmc/shipping-app.git
 ```
 
 Navigate to the project directory
 
 ```bash
-cd middleware-app
+cd shipping-app
 ```
 
 Uncomment `spring.profiles.active=docker` this line in your `src/main/resources/application.properties`  
