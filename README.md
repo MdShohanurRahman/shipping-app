@@ -1,4 +1,4 @@
-# **Shipping App**
+# **Shipping Rate Comparison App**
 
 This project is a middleware that provides shipping rate comparison between two shipping providers: City Link Express and JT Express. Users can submit a request with specific details of their shipment, and the middleware will return rates for both providers.
 
